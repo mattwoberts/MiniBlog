@@ -16,6 +16,7 @@
 
     <link rel="stylesheet" href="@Blog.FingerPrint("/css/bootstrap-readable.css", "//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css")" />
     <link rel="stylesheet" href="@Blog.FingerPrint("/themes/" + Blog.Theme + "/site.css")" />
+    <link rel="stylesheet" href="/css/prism.css">
     <link rel="shortcut icon" href="@Blog.FingerPrint("/favicon.ico")" type="image/x-icon" />
     <link rel="dns-prefetch" href="http://gravatar.com/" />
 
@@ -38,6 +39,8 @@
 	}
 </head>
 <body itemscope itemtype="http://schema.org/Blog" class="@(User.Identity.IsAuthenticated ? "admin": null)">
+    
+    <script src="/scripts/prism.js"></script>
 
     <div class="container">
         <header role="banner">
