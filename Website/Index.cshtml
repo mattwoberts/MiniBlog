@@ -35,6 +35,7 @@
         if (post == null) { throw new HttpException(404, "Post not found"); }
 
         Page.Title = post.Title;
+		Page.Description = post.Excerpt;
         lastModified = post.LastModified;
 
         Response.AddCacheDependency(new CacheDependency(Server.MapPath("~/posts/" + post.ID + ".xml")));
@@ -44,7 +45,7 @@
 	
 	@AntiForgery.GetHtml()
 
-    if (!Request.IsLocal)
+    if ( !Request.IsLocal && !User.Identity.IsAuthenticated )
     {
         Response.Cache.AppendCacheExtension("max-age=0");
         Response.Cache.SetValidUntilExpires(true);
@@ -56,6 +57,7 @@
         Response.AddCacheDependency(new CacheDependency(Server.MapPath("~/css")));
         Response.AddCacheDependency(new CacheDependency(Server.MapPath("~/themes/" + Blog.Theme)));
 
-        Blog.SetConditionalGetHeaders(lastModified, Context);
+        
+        Blog.SetConditionalGetHeaders(lastModified.ToLocalTime(), Context);
     }
 }
