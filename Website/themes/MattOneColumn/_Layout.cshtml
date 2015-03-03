@@ -38,61 +38,73 @@
 		<link rel="next" href="@next" />
 	}
 </head>
-<body itemscope itemtype="http://schema.org/Blog" class="@(User.Identity.IsAuthenticated ? "admin": null)">
+    <body itemscope itemtype="http://schema.org/Blog" class="@(User.Identity.IsAuthenticated ? "admin": null)">
     
-    <script src="/scripts/prism.js"></script>
+        <script src="/scripts/prism.js"></script>
 
-    <div class="container">
-        <header role="banner">
-            <span itemprop="name"><a href="~/" itemprop="url">@Blog.Title</a></span><br />
-            <em>@Blog.Description</em>
-        </header>
+        <div class="container">
+            <header role="banner">
+                <span itemprop="name"><a href="~/" itemprop="url">@Blog.Title</a></span><br />
+                <em>@Blog.Description</em>
+            </header>
 
-        <div role="main" class="col-md-8 col-md-offset-2">
-            @RenderBody()
+            <div role="main" class="col-md-8 col-md-offset-2">
+                @RenderBody()
 
-            @if (Page.ShowPaging != null)
-            {
-                <ul class="pager">
-                    @if (Blog.GetPosts().Count() > Blog.PostsPerPage * Blog.CurrentPage)
-                    {
-                        <li class="previous"><a href="@Blog.GetPagingUrl(1)" rel="prev">&larr; Older</a></li>
-                    }
+                @if (Page.ShowPaging != null)
+                {
+                    <ul class="pager">
+                        @if (Blog.GetPosts().Count() > Blog.PostsPerPage * Blog.CurrentPage)
+                        {
+                            <li class="previous"><a href="@Blog.GetPagingUrl(1)" rel="prev">&larr; Older</a></li>
+                        }
 
-                    @if (Blog.CurrentPage > 1)
-                    {
-                        <li class="next"><a href="@Blog.GetPagingUrl(-1)" rel="next">Newer &rarr;</a></li>
-                    }
-                </ul>
-            }
+                        @if (Blog.CurrentPage > 1)
+                        {
+                            <li class="next"><a href="@Blog.GetPagingUrl(-1)" rel="next">Newer &rarr;</a></li>
+                        }
+                    </ul>
+                }
+            </div>
         </div>
-    </div>
 
-    <footer class="text-center" role="contentinfo" itemscope itemtype="http://schema.org/Person" itemprop="author">
-        @if (!User.Identity.IsAuthenticated)
-        {
-            <span class="pull-right">
-                <a href="@FormsAuthentication.LoginUrl?ReturnUrl=@Request.RawUrl">Sign in <i class="glyphicon glyphicon-lock"></i></a>
+        <footer class="text-center" role="contentinfo" itemscope itemtype="http://schema.org/Person" itemprop="author">
+            @if (!User.Identity.IsAuthenticated)
+            {
+                <span class="pull-right">
+                    <a href="@FormsAuthentication.LoginUrl?ReturnUrl=@Request.RawUrl">Sign in <i class="glyphicon glyphicon-lock"></i></a>
+                </span>
+            }
+            <span>
+                Copyright &copy; @DateTime.Now.Year
+                <a href="http://matt-roberts.me" itemprop="url name">Matt Roberts</a>
             </span>
+        </footer>
+
+
+        @if ((Blog.CurrentPost != null && Blog.CurrentPost.AreCommentsOpen(Context)) || Blog.IsNewPost)
+        {
+            <script src="@Blog.FingerPrint("/scripts/comments.js")" async defer></script>
         }
-        <span>
-            Copyright &copy; @DateTime.Now.Year
-            <a href="http://matt-roberts.me" itemprop="url name">Matt Roberts</a>
-        </span>
-    </footer>
 
+        @if (User.Identity.IsAuthenticated)
+        {
+            @RenderPage("~/views/AdminMenu.cshtml")
+        }
 
-    @if ((Blog.CurrentPost != null && Blog.CurrentPost.AreCommentsOpen(Context)) || Blog.IsNewPost)
-    {
-        <script src="@Blog.FingerPrint("/scripts/comments.js")" async defer></script>
-    }
+    </body>
 
-    @if (User.Identity.IsAuthenticated)
-    {
-        @RenderPage("~/views/AdminMenu.cshtml")
-    }
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-</body>
+            ga('create', 'UA-30168332-1', 'auto');
+            ga('send', 'pageview');
+
+    </script>
+
 </html>
 
 @helper AdminCss()
@@ -102,3 +114,5 @@
         <link href="@Blog.FingerPrint("/css/admin.css")" rel="stylesheet" />
     }
 }
+
+
